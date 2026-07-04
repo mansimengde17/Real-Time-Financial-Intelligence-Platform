@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mansi Mengde | AI Engineering Portfolio</title>
+<meta name="description" content="Ten production-grade AI engineering systems: evaluation, routing, observability, RAG, caching, guardrails, experimentation, and fine-tuning. Each with a live interactive demo.">
+<style>
+:root {
+  --bg: #04050d; --text: #e2e7ff; --muted: #8a93c4;
+  --line: rgba(120, 140, 255, 0.15); --panel: rgba(12, 15, 32, 0.8);
+  --a1: #5b8cff; --a2: #8f6bff; --a3: #39d98a; --a4: #ff8a5c;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); overflow-x: hidden;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif; }
+#bg3d { position: fixed; inset: 0; z-index: 0; }
+.wrap { position: relative; z-index: 2; max-width: 1160px; margin: 0 auto;
+  padding: 0 24px; }
+nav { display: flex; justify-content: space-between; align-items: center;
+  padding: 24px 0; }
+nav .brand { font-weight: 700; letter-spacing: 3px; font-size: 13px;
+  color: var(--muted); text-transform: uppercase; }
+nav a { color: var(--text); text-decoration: none; font-size: 14px;
+  margin-left: 20px; padding: 8px 16px; border: 1px solid var(--line);
+  border-radius: 8px; transition: all .25s; }
+nav a:hover { border-color: var(--a1); color: var(--a1);
+  box-shadow: 0 0 20px rgba(91, 140, 255, 0.3); }
+header { min-height: 96vh; display: flex; flex-direction: column;
+  justify-content: center; }
+.kicker { color: var(--a3); font-size: 13px; letter-spacing: 4px;
+  text-transform: uppercase; font-weight: 700; margin-bottom: 20px;
+  animation: fadeUp 1s ease both; }
+h1 { font-size: clamp(40px, 7vw, 84px); line-height: 1.02; max-width: 900px;
+  background: linear-gradient(115deg, #ffffff 10%, var(--a1) 45%,
+  var(--a2) 70%, var(--a3)); -webkit-background-clip: text;
+  background-clip: text; color: transparent;
+  animation: fadeUp 1s .15s ease both; }
+.tagline { margin-top: 26px; font-size: 19px; color: var(--muted);
+  max-width: 700px; line-height: 1.65; animation: fadeUp 1s .3s ease both; }
+.herostats { display: flex; gap: 34px; margin-top: 40px; flex-wrap: wrap;
+  animation: fadeUp 1s .45s ease both; }
+.herostats div b { font-size: 30px; display: block;
+  background: linear-gradient(115deg, var(--a1), var(--a3));
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.herostats div span { color: var(--muted); font-size: 12.5px;
+  letter-spacing: 1.5px; text-transform: uppercase; }
+.cta { margin-top: 44px; display: flex; gap: 14px; flex-wrap: wrap;
+  animation: fadeUp 1s .6s ease both; }
+.cta a { text-decoration: none; padding: 15px 32px; border-radius: 11px;
+  font-weight: 700; font-size: 15px; transition: transform .2s; }
+.cta a:hover { transform: translateY(-3px); }
+.cta .primary { background: linear-gradient(115deg, var(--a1), var(--a2));
+  color: #05060f; box-shadow: 0 8px 40px rgba(91, 140, 255, 0.35); }
+.cta .ghost { border: 1px solid var(--line); color: var(--text); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; } }
+section { padding: 90px 0 30px; }
+h2 { font-size: 34px; margin-bottom: 10px; }
+.sub { color: var(--muted); font-size: 16px; margin-bottom: 42px;
+  max-width: 700px; line-height: 1.6; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill,
+  minmax(330px, 1fr)); gap: 20px; }
+.card { position: relative; background: var(--panel); border: 1px solid
+  var(--line); border-radius: 18px; padding: 26px;
+  backdrop-filter: blur(14px); transition: transform .25s ease,
+  border-color .3s, box-shadow .3s; transform-style: preserve-3d;
+  overflow: hidden; }
+.card::before { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 0%),
+  rgba(91, 140, 255, 0.13), transparent 45%); opacity: 0;
+  transition: opacity .3s; pointer-events: none; }
+.card:hover::before { opacity: 1; }
+.card:hover { border-color: var(--ac, var(--a1));
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.5); }
+.card .num { font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  color: var(--ac, var(--a1)); }
+.card h3 { margin: 10px 0 10px; font-size: 19.5px; line-height: 1.3; }
+.card p { color: var(--muted); font-size: 14px; line-height: 1.62;
+  min-height: 88px; }
+.tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0 20px; }
+.tags span { font-size: 11px; letter-spacing: 1px; color: var(--muted);
+  border: 1px solid var(--line); padding: 4px 9px; border-radius: 6px;
+  text-transform: uppercase; }
+.card .links { display: flex; gap: 10px; }
+.card .links a { flex: 1; text-align: center; text-decoration: none;
+  font-size: 13.5px; font-weight: 600; padding: 11px 0; border-radius: 9px;
+  transition: all .2s; }
+.card .links .demo { background: linear-gradient(115deg, var(--ac,
+  var(--a1)), var(--ac2, var(--a2))); color: #05060f; }
+.card .links .demo:hover { filter: brightness(1.15); }
+.card .links .code { border: 1px solid var(--line); color: var(--text); }
+.card .links .code:hover { border-color: var(--ac, var(--a1)); }
+.flow { display: grid; gap: 14px; }
+.flow .row { display: flex; gap: 16px; align-items: flex-start;
+  border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px;
+  background: var(--panel); backdrop-filter: blur(10px);
+  transition: border-color .3s; }
+.flow .row:hover { border-color: var(--a1); }
+.flow .n { min-width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #05060f;
+  background: linear-gradient(115deg, var(--a1), var(--a3)); }
+.flow b { display: block; margin-bottom: 5px; font-size: 16px; }
+.flow p { color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+footer { border-top: 1px solid var(--line); margin-top: 80px;
+  padding: 44px 0 70px; color: var(--muted); font-size: 14px;
+  line-height: 1.8; }
+footer a { color: var(--a1); text-decoration: none; }
+.reveal { opacity: 0; transform: translateY(34px);
+  transition: opacity .7s ease, transform .7s ease; }
+.reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+<canvas id="bg3d"></canvas>
+<div class="wrap">
+
+<nav>
+  <div class="brand">Mansi Mengde</div>
+  <div>
+    <a href="#projects">Projects</a>
+    <a href="#workflow">How it works</a>
+    <a href="https://github.com/mansimengde17" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<header>
+  <div class="kicker">AI Engineering Portfolio</div>
+  <h1>Systems that ship, measure, and correct AI in production</h1>
+  <p class="tagline">Ten production-grade projects covering the full AI
+  engineering lifecycle: evaluation pipelines, cost-aware routing,
+  observability, retrieval, caching, guardrails, experimentation, and
+  fine-tuning. Every one has working code on GitHub and a live interactive
+  demo running its real decision logic in your browser.</p>
+  <div class="herostats">
+    <div><b>10</b><span>systems</span></div>
+    <div><b>10</b><span>live demos</span></div>
+    <div><b>50+</b><span>passing tests</span></div>
+    <div><b>0</b><span>API keys needed to run them</span></div>
+  </div>
+  <div class="cta">
+    <a class="primary" href="#projects">Explore the projects</a>
+    <a class="ghost" href="#workflow">How to use the demos</a>
+  </div>
+</header>
+
+<section id="projects">
+  <h2 class="reveal">The ten systems</h2>
+  <p class="sub reveal">Each card links to a live animated demo and the
+  full source repository with architecture documentation, tests, and
+  Docker packaging.</p>
+  <div class="grid" id="cardgrid"></div>
+</section>
+
+<section id="workflow">
+  <h2 class="reveal">How these systems fit together</h2>
+  <p class="sub reveal">The portfolio maps to the lifecycle of an LLM
+  feature in production. Follow the flow from shipping safely to
+  continuously improving.</p>
+  <div class="flow">
+    <div class="row reveal"><div class="n">1</div><div>
+      <b>Ship safely</b>
+      <p>The Text-to-SQL interface and the RAG pipeline show user-facing AI
+      built defensively: guardrails that block destructive operations,
+      hallucination detection through back-translation, verified citations,
+      and honest refusals when the system does not know.</p></div></div>
+    <div class="row reveal"><div class="n">2</div><div>
+      <b>Control cost and latency</b>
+      <p>The Cost Autopilot routes each request to the cheapest capable
+      model with an async quality verification loop, and the Semantic Cache
+      serves repeated intent in under a millisecond. Together they attack
+      the two biggest line items of LLM infrastructure.</p></div></div>
+    <div class="row reveal"><div class="n">3</div><div>
+      <b>Measure everything</b>
+      <p>The Regression Detection System runs golden-dataset evals on every
+      prompt change and blocks bad merges; the A/B Testing Platform brings
+      statistical significance to prompt iteration; the Arbitration System
+      has three critic models audit any output and an adjudicator resolve
+      their disagreements.</p></div></div>
+    <div class="row reveal"><div class="n">4</div><div>
+      <b>Diagnose and heal</b>
+      <p>The Failure Forensics tool traces multi-step pipelines and walks
+      backward to the root cause in seconds, while Self-Healing
+      Documentation detects docs made stale by code changes and repairs
+      them in an automated PR.</p></div></div>
+    <div class="row reveal"><div class="n">5</div><div>
+      <b>Customize the model itself</b>
+      <p>When prompting is not enough, the LoRA Fine-Tuning Pipeline takes
+      a domain dataset from curation through leakage-safe splits,
+      config-driven QLoRA training, honest base-versus-tuned benchmarking,
+      and a forgetting check.</p></div></div>
+    <div class="row reveal"><div class="n">6</div><div>
+      <b>Using the demos</b>
+      <p>Every demo page opens with an interactive simulation of the
+      system's real decision logic, followed by the architecture and exact
+      commands to run it. Everything also runs offline from a fresh clone:
+      pip install, one command, no API keys.</p></div></div>
+  </div>
+</section>
+
+<footer>
+  Built by <b>Mansi Mengde</b>. All source code lives at
+  <a href="https://github.com/mansimengde17" target="_blank" rel="noopener">
+  github.com/mansimengde17</a>. Every project runs offline with a
+  deterministic provider and switches to live models with a single
+  environment variable.
+</footer>
+</div>
+
+<script src="three.min.js"></script>
+<script>
+if (typeof THREE === 'undefined') {
+  document.write('<scr' + 'ipt src="https://cdnjs.cloudflare.com/ajax/libs/'
+    + 'three.js/r128/three.min.js"><\/scr' + 'ipt>');
+}
+</script>
+<script>
+var PROJECTS = [
+  { t: 'Model Regression Detection System',
+    d: 'CI/CD for model behavior: every prompt change runs against a human-verified golden dataset, regressions are diffed case by case, slow drift is tracked separately, and critical drops block the merge with a Slack alert.',
+    tags: ['Evaluation', 'CI/CD', 'Golden Dataset', 'Drift'],
+    repo: 'Model-Regression-Detection-System', ac: '#5b8cff', ac2: '#8f6bff' },
+  { t: 'LLM Cost Autopilot',
+    d: 'An intelligent routing layer that classifies request complexity and sends each one to the cheapest capable model, then proves quality held with an async verification loop and auto-escalation. 53.7 percent savings on the demo workload.',
+    tags: ['Routing', 'Cost Optimization', 'FastAPI', 'Classifier'],
+    repo: 'LLM-Cost-Autopilot', ac: '#39d98a', ac2: '#5b8cff' },
+  { t: 'Failure Forensics Tool for AI Pipelines',
+    d: 'Observability for multi-step AI: span-level tracing with self-reported confidence, backward root cause analysis with a failure taxonomy and evidence chains, and a feedback loop that turns confirmed failures into eval cases.',
+    tags: ['Observability', 'Tracing', 'Root Cause', 'Eval Loop'],
+    repo: 'Failure-Forensics-Tool-for-AI-Pipelines', ac: '#ff8a5c', ac2: '#ff5c7a' },
+  { t: 'Self-Healing Technical Documentation',
+    d: 'A GitHub Action that detects when code changes invalidate documentation through a code-to-docs link graph, verifies staleness, auto-fixes mechanical drift in place, and flags behavioral changes for human review.',
+    tags: ['GitHub Action', 'Embeddings', 'AST Parsing', 'Automation'],
+    repo: 'Self-Healing-Technical-Documentation', ac: '#4dd0e1', ac2: '#5b8cff' },
+  { t: 'LLM Output Arbitration System',
+    d: 'Three specialized critics on three different models evaluate any LLM output in parallel; disagreements are detected and an adjudicator resolves them into a single confidence-scored verdict with dismissed-flag reasoning.',
+    tags: ['Multi-Agent', 'Critics', 'Adjudication', 'Pydantic'],
+    repo: 'LLM-Output-Arbitration-System', ac: '#c17bff', ac2: '#5b8cff' },
+  { t: 'RAG Pipeline with Hybrid Search',
+    d: 'Dense vectors plus BM25 fused with Reciprocal Rank Fusion and reranked, grounded generation with verified inline citations, composite confidence scoring, and an honest structured refusal when the corpus cannot answer.',
+    tags: ['RAG', 'Hybrid Retrieval', 'RRF', 'Citations'],
+    repo: 'RAG-Pipeline-with-Hybrid-Search-Over-Internal-Docs', ac: '#ffd166', ac2: '#ff8a5c' },
+  { t: 'Semantic Caching Layer for LLM APIs',
+    d: 'An OpenAI-compatible proxy that recognizes semantically similar prompts and serves cached responses in under a millisecond, with namespaced keys, TTL policies, adaptive thresholds, and a 73 percent hit rate on the load test.',
+    tags: ['Caching', 'Embeddings', 'Proxy', 'Latency'],
+    repo: 'Semantic-Caching-Layer-for-LLM-APIs', ac: '#57d9c8', ac2: '#39d98a' },
+  { t: 'Text-to-SQL with Guardrails',
+    d: 'Natural language to SQL with a zero-write guardrail layer, read-only sandboxed execution, back-translation hallucination detection, and multi-query agreement. 10 of 10 on the eval suite with zero unsafe queries executed.',
+    tags: ['Text-to-SQL', 'Guardrails', 'Hallucination', 'Safety'],
+    repo: 'Text-to-SQL-Interface-with-Guardrails-and-Hallucination-Detection', ac: '#ff5c7a', ac2: '#c17bff' },
+  { t: 'Prompt Versioning and A/B Testing Platform',
+    d: 'Prompts as versioned artifacts with diffs and one-call rollback, deterministic consistent-hash traffic splitting, pluggable metrics, Welch t-test significance analysis, auto-stop guardrails, and a complete audit log.',
+    tags: ['Experimentation', 'Statistics', 'Versioning', 'Audit'],
+    repo: 'Prompt-Versioning-and-A-B-Testing-Platform', ac: '#5b8cff', ac2: '#57d9c8' },
+  { t: 'LoRA Fine-Tuning Pipeline',
+    d: 'A reproducible pipeline from leakage-safe dataset construction through config-driven QLoRA training, a hyperparameter sweep, honest base-versus-tuned benchmarking with an LLM judge, and a catastrophic forgetting check.',
+    tags: ['LoRA', 'QLoRA', 'PEFT', 'Benchmarking'],
+    repo: 'Fine-Tuning-Pipeline-with-LoRA-on-a-Domain-Specific-Dataset', ac: '#8f6bff', ac2: '#ff8a5c' }];
+
+var grid = document.getElementById('cardgrid');
+PROJECTS.forEach(function (p, i) {
+  var card = document.createElement('div');
+  card.className = 'card reveal';
+  card.style.setProperty('--ac', p.ac);
+  card.style.setProperty('--ac2', p.ac2);
+  card.innerHTML =
+    '<div class="num">PROJECT ' + String(i + 1).padStart(2, '0') + '</div>'
+    + '<h3>' + p.t + '</h3><p>' + p.d + '</p>'
+    + '<div class="tags">' + p.tags.map(function (t) {
+        return '<span>' + t + '</span>'; }).join('') + '</div>'
+    + '<div class="links">'
+    + '<a class="demo" href="https://mansimengde17.github.io/' + p.repo
+    + '/">Live Demo</a>'
+    + '<a class="code" href="https://github.com/mansimengde17/' + p.repo
+    + '" target="_blank" rel="noopener">Source</a></div>';
+  card.addEventListener('mousemove', function (e) {
+    var r = card.getBoundingClientRect();
+    var x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    card.style.setProperty('--mx', (x * 100) + '%');
+    card.style.setProperty('--my', (y * 100) + '%');
+    card.style.transform = 'perspective(900px) rotateY(' + ((x - 0.5) * 7)
+      + 'deg) rotateX(' + ((0.5 - y) * 7) + 'deg) translateY(-4px)';
+  });
+  card.addEventListener('mouseleave', function () {
+    card.style.transform = '';
+  });
+  grid.appendChild(card);
+});
+
+// Scroll reveal
+var obs = new IntersectionObserver(function (entries) {
+  entries.forEach(function (e) {
+    if (e.isIntersecting) e.target.classList.add('in');
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(function (n) { obs.observe(n); });
+</script>
+<script>
+// 3D scene: neural constellation. Nodes orbit on shells, connected by
+// pulsing links; a starfield and nebula sprites fill the depth. Camera
+// drifts with the mouse and dives on scroll.
+(function () {
+  var canvas = document.getElementById('bg3d');
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true,
+    antialias: true });
+  var scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x04050d, 0.02);
+  var camera = new THREE.PerspectiveCamera(60, 1, 0.1, 400);
+  camera.position.set(0, 0, 34);
+
+  var PALETTE = [0x5b8cff, 0x8f6bff, 0x39d98a, 0xff8a5c, 0x57d9c8,
+                 0xc17bff, 0xffd166, 0xff5c7a];
+
+  // Starfield
+  var starN = 1600, sPos = new Float32Array(starN * 3);
+  for (var i = 0; i < starN; i++) {
+    sPos[3*i] = (Math.random() - 0.5) * 240;
+    sPos[3*i+1] = (Math.random() - 0.5) * 150;
+    sPos[3*i+2] = (Math.random() - 0.5) * 200 - 30;
+  }
+  var starGeo = new THREE.BufferGeometry();
+  starGeo.setAttribute('position', new THREE.BufferAttribute(sPos, 3));
+  var stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
+    color: 0x9fb0ff, size: 0.22, transparent: true, opacity: 0.7 }));
+  scene.add(stars);
+
+  // Neural constellation: 10 cluster cores (one per project) on a ring,
+  // each with satellite nodes; links pulse between neighbors.
+  var net = new THREE.Group();
+  var cores = [];
+  for (var c = 0; c < 10; c++) {
+    var angle = c / 10 * Math.PI * 2;
+    var radius = 13 + Math.sin(c * 2.4) * 2.5;
+    var core = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.85, 1),
+      new THREE.MeshStandardMaterial({ color: 0x0d1024,
+        emissive: PALETTE[c % PALETTE.length], emissiveIntensity: 0.85,
+        wireframe: true }));
+    core.position.set(Math.cos(angle) * radius,
+      Math.sin(c * 1.7) * 5.5, Math.sin(angle) * radius);
+    core.userData = { angle: angle, radius: radius, speed: 0.05
+      + (c % 3) * 0.012, yBase: Math.sin(c * 1.7) * 5.5, phase: c };
+    net.add(core); cores.push(core);
+    for (var s = 0; s < 7; s++) {
+      var sat = new THREE.Mesh(new THREE.SphereGeometry(0.13, 8, 8),
+        new THREE.MeshBasicMaterial({
+          color: PALETTE[c % PALETTE.length] }));
+      var sr = 1.7 + Math.random() * 1.6;
+      sat.userData = { parent: core, sr: sr,
+        sa: Math.random() * Math.PI * 2,
+        sv: 0.4 + Math.random() * 0.7,
+        tilt: Math.random() * Math.PI };
+      net.add(sat);
+      (core.userData.sats = core.userData.sats || []).push(sat);
+    }
+  }
+  // Links between adjacent cores
+  var linkMat = new THREE.LineBasicMaterial({ color: 0x5b8cff,
+    transparent: true, opacity: 0.34 });
+  var links = [];
+  for (var c = 0; c < 10; c++) {
+    var geoL = new THREE.BufferGeometry().setFromPoints(
+      [cores[c].position, cores[(c + 1) % 10].position]);
+    var line = new THREE.Line(geoL, linkMat.clone());
+    line.userData = { a: cores[c], b: cores[(c + 1) % 10], phase: c * 0.6 };
+    net.add(line); links.push(line);
+    if (c % 2 === 0) {
+      var geoX = new THREE.BufferGeometry().setFromPoints(
+        [cores[c].position, cores[(c + 4) % 10].position]);
+      var cross = new THREE.Line(geoX, linkMat.clone());
+      cross.userData = { a: cores[c], b: cores[(c + 4) % 10],
+        phase: c * 0.9 + 1 };
+      net.add(cross); links.push(cross);
+    }
+  }
+  // Pulses that travel along links
+  var pulses = [];
+  for (var p = 0; p < 14; p++) {
+    var dot = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 8),
+      new THREE.MeshBasicMaterial({
+        color: PALETTE[p % PALETTE.length] }));
+    dot.userData = { link: links[p % links.length],
+      t: Math.random(), v: 0.004 + Math.random() * 0.006 };
+    net.add(dot); pulses.push(dot);
+  }
+  scene.add(net);
+
+  // Central sun
+  var sun = new THREE.Mesh(new THREE.TorusKnotGeometry(3.4, 1.05, 200, 24),
+    new THREE.MeshStandardMaterial({ color: 0x0d1024, metalness: 0.8,
+      roughness: 0.2, emissive: 0x5b8cff, emissiveIntensity: 0.3,
+      wireframe: true }));
+  scene.add(sun);
+
+  scene.add(new THREE.AmbientLight(0x2e3560, 0.9));
+  var l1 = new THREE.PointLight(0x5b8cff, 1.6, 160); l1.position.set(24, 16, 26);
+  var l2 = new THREE.PointLight(0x39d98a, 1.2, 160); l2.position.set(-22, -12, 18);
+  scene.add(l1, l2);
+
+  var mouseX = 0, mouseY = 0;
+  window.addEventListener('mousemove', function (e) {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+  });
+  function resize() {
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize); resize();
+
+  var t = 0;
+  (function animate() {
+    requestAnimationFrame(animate);
+    t += 0.004;
+    sun.rotation.x = t * 0.8; sun.rotation.y = t * 0.55;
+    stars.rotation.y = t * 0.06;
+    net.rotation.y = t * 0.28;
+    cores.forEach(function (core) {
+      var u = core.userData;
+      var a = u.angle + t * u.speed * 6;
+      core.position.x = Math.cos(a) * u.radius;
+      core.position.z = Math.sin(a) * u.radius;
+      core.position.y = u.yBase + Math.sin(t * 2 + u.phase) * 1.1;
+      core.rotation.y += 0.01;
+      (u.sats || []).forEach(function (sat) {
+        var su = sat.userData;
+        su.sa += su.sv * 0.016;
+        sat.position.set(
+          core.position.x + Math.cos(su.sa) * su.sr,
+          core.position.y + Math.sin(su.sa) * Math.sin(su.tilt) * su.sr,
+          core.position.z + Math.sin(su.sa) * Math.cos(su.tilt) * su.sr);
+      });
+    });
+    links.forEach(function (line) {
+      var pts = line.geometry.attributes.position.array;
+      pts[0] = line.userData.a.position.x;
+      pts[1] = line.userData.a.position.y;
+      pts[2] = line.userData.a.position.z;
+      pts[3] = line.userData.b.position.x;
+      pts[4] = line.userData.b.position.y;
+      pts[5] = line.userData.b.position.z;
+      line.geometry.attributes.position.needsUpdate = true;
+      line.material.opacity = 0.18 + 0.2
+        * (0.5 + Math.sin(t * 6 + line.userData.phase) * 0.5);
+    });
+    pulses.forEach(function (dot) {
+      var u = dot.userData;
+      u.t += u.v;
+      if (u.t > 1) { u.t = 0;
+        u.link = links[Math.floor(Math.random() * links.length)]; }
+      dot.position.lerpVectors(u.link.userData.a.position,
+        u.link.userData.b.position, u.t);
+    });
+    var scroll = Math.min(window.scrollY
+      / Math.max(1, window.innerHeight), 3);
+    camera.position.z = 34 - scroll * 6;
+    camera.position.x += (mouseX * 4 - camera.position.x) * 0.03;
+    camera.position.y += (-mouseY * 3 - scroll * 2.5 - camera.position.y)
+      * 0.03;
+    camera.lookAt(0, -scroll * 2, 0);
+    renderer.render(scene, camera);
+  })();
+})();
+</script>
+</body>
+</html>
