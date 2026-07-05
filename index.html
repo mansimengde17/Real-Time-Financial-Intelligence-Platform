@@ -507,12 +507,11 @@ document.querySelectorAll('.reveal').forEach(function (n) { obs.observe(n); });
   var bubble = document.getElementById('bubble');
   var text = document.getElementById('bubbletext');
   var sayAgain = document.getElementById('sayagain');
-  var GREETING = "Hi, I am Mansi's AI engineering guide. Come explore the "
-    + "systems she shipped for production, each one is live and you can "
-    + "run every demo right here.";
-  var BUBBLE_HTML = "Hey there. I am <b>Mansi's AI engineering guide</b>. "
-    + "Let us explore the systems she shipped for production. Every card "
-    + "below opens a live demo you can run yourself.";
+  var GREETING = "Hey, I am Mansi! I built all of these AI systems from scratch. "
+    + "Click on any live demo card below to see them running for real.";
+  var BUBBLE_HTML = "Hey, I am <b>Mansi</b>! I built all of these AI systems "
+    + "from scratch. Click the <b>Live Demo</b> button on any card to see "
+    + "them running for real.";
   var spoke = false;
 
   function speak() {
