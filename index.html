@@ -514,20 +514,36 @@ document.querySelectorAll('.reveal').forEach(function (n) { obs.observe(n); });
     + "them running for real.";
   var spoke = false;
 
+  function pickVoice(callback) {
+    var voices = window.speechSynthesis.getVoices();
+    if (voices.length) { callback(voices); return; }
+    var done = false;
+    window.speechSynthesis.onvoiceschanged = function () {
+      if (done) return; done = true;
+      callback(window.speechSynthesis.getVoices());
+    };
+    setTimeout(function () {
+      if (!done) { done = true; callback(window.speechSynthesis.getVoices()); }
+    }, 1500);
+  }
+
   function speak() {
     try {
       if (!('speechSynthesis' in window)) return;
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(GREETING);
-      u.rate = 1.02; u.pitch = 1.5; u.volume = 1;
-      var voices = window.speechSynthesis.getVoices();
-      var pick = voices.filter(function (v) {
-        return /female|zira|samantha|google uk english female|susan|fiona/i
-          .test(v.name); });
-      if (pick.length) u.voice = pick[0];
-      guide.classList.add('talking');
-      u.onend = function () { guide.classList.remove('talking'); };
-      window.speechSynthesis.speak(u);
+      u.rate = 0.95; u.pitch = 1.2; u.volume = 1;
+      pickVoice(function (voices) {
+        var fem = voices.filter(function (v) {
+          return /female|zira|samantha|google uk english female|susan|fiona|victoria|kate|moira/i.test(v.name);
+        });
+        var en = voices.filter(function (v) { return /^en/i.test(v.lang); });
+        var pick = fem.length ? fem : en.length ? en : voices;
+        if (pick.length) u.voice = pick[0];
+        guide.classList.add('talking');
+        u.onend = function () { guide.classList.remove('talking'); };
+        window.speechSynthesis.speak(u);
+      });
     } catch (e) {}
   }
   var hideTimer;
@@ -550,8 +566,7 @@ document.querySelectorAll('.reveal').forEach(function (n) { obs.observe(n); });
   window.addEventListener('pointerdown', firstGesture);
   window.addEventListener('keydown', firstGesture);
   window.addEventListener('scroll', firstGesture, { passive: true });
-  if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged =
-    function () {};
+  // voices loaded async — handled inside pickVoice()
   sayAgain.addEventListener('click', function (e) {
     e.stopPropagation(); greet(); });
   guide.addEventListener('click', function () {
